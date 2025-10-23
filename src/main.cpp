@@ -8,6 +8,7 @@ std::ifstream reader;
 std::ofstream writer;
 std::string filename;
 std::string target;
+bool targetSet = false;
 using json = nlohmann::json;
 json j;
 
@@ -25,6 +26,7 @@ int main(int argc, char* argv[]) {
 		std::cin >> filename;
 		std::cout << "target filename >> ";
 		std::cin >> target;
+		targetSet = true;
 		reader.open(filename);
 		if (reader.fail()) {
 			std::cout << "reader failed" << '\n';
@@ -45,11 +47,18 @@ int main(int argc, char* argv[]) {
 			writer.open("extract" + filename);
 		}
 	} else {
-		if (argc < 3 and argc != 1)
+		if (argc == 2)
 			writer.open("extract" + filename);
-		if (argc == 1) {
-			writer.open(target);
+		if (argc == 3) {
+			std::cout << "target filename >> ";
+			std::cin >> target;
+			targetSet = true;
 		}
+	}
+	if (targetSet) {
+		writer.open(target);
+	} else {
+		writer.open("extract" + filename);
 	}
 	writer << std::setw(4) << j;
 	return 0;
