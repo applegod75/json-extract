@@ -44,22 +44,26 @@ int main(int argc, char* argv[]) {
 		writer.open(std::string(argv[3]));
 		if (writer.fail()) {
 			std::cerr << "writer failed, writing to 'extract" << filename << "'\n";
-			writer.open("extract" + filename);
+			targetSet = false;
 		}
 	} else {
-		if (argc == 2)
-			writer.open("extract" + filename);
 		if (argc == 3) {
 			std::cout << "target filename >> ";
 			std::cin >> target;
 			targetSet = true;
 		}
 	}
-	if (targetSet) {
+	if (targetSet and not writer.is_open()) {
 		writer.open(target);
 	} else {
-		writer.open("extract" + filename);
+		if (not writer.is_open())
+			writer.open("extract" + filename);
+	}
+	if (writer.bad()) {
+		std::cout << "writer failed";
+		return EXIT_FAILURE;
 	}
 	writer << std::setw(4) << j;
+	writer.close();
 	return 0;
 }
